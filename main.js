@@ -42,12 +42,8 @@ client.on('messageCreate',  (message) => {
       player.play(resource);
       conn.subscribe(player);
 
-      player.on(AudioPlayerStatus.Playing, () => {
-        console.log('The audio is now playing!');
-      });
 
       player.on(AudioPlayerStatus.Idle, () => {
-        console.log('The audio has finished playing!');
         conn.destroy();
       });
 
