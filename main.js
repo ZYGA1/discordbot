@@ -37,7 +37,7 @@ client.on('messageCreate',  (message) => {
       });
 
       const player = createAudioPlayer();
-      const resource = createAudioResource(path.join(__dirname, 'audio.mp3'));
+      const resource = createAudioResource(path.join(__dirname, 'audio (1).mp3'));
 
       player.play(resource);
       conn.subscribe(player);
