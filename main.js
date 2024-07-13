@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
-const ydtl = require('ytdl-core')
+const {exec} = require('child_process')
+const {unlink} = require('fs')
 dotenv.config();
 const path = require('path');
 
@@ -7,6 +8,7 @@ const path = require('path');
 const { KEY } = process.env;
 const { Client, IntentsBitField, EmbedBuilder } = require("discord.js");
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const ytdl = require("ytdl-core");
 
 const client = new Client({
   intents: [
@@ -30,6 +32,12 @@ client.on('messageCreate',  (message) => {
   if (message.content === '.') {
     message.reply("Chuj ci w dupe");
 
+    unlink(path.join(__dirname, 'audio.mp3'), (err) => {
+      if(err) {
+        console.log(err)
+      }
+    })
+
     if (message.member.voice.channel) {
       const conn = joinVoiceChannel({
         channelId: message.member.voice.channel.id,
@@ -37,15 +45,41 @@ client.on('messageCreate',  (message) => {
         adapterCreator: message.guild.voiceAdapterCreator,
       });
       
-      const player = createAudioPlayer();
-      const stream = ydtl("https://www.youtube.com/embed/5aYwU4nj5QA", {filter: 'audioonly'})
-      const resource = createAudioResource(stream);
 
-      player.play(resource);
-      conn.subscribe(player);
+      const player = createAudioPlayer();
+
+      const komenda = 'yt-dlp -x --audio-format mp3 -o audio.mp3 https://www.youtube.com/watch?v=pRpeEdMmmQ0'
+      exec(komenda, (err, out, stderr) => {
+        if (err) {
+          console.log('komand error')
+        }
+
+        if(stderr) {
+          console.log(stderr)
+        }
+
+        const resource = createAudioResource(path.join(__dirname, 'audio.mp3'));
+        
+
+        player.play(resource);
+        conn.subscribe(player);
+      })
+
+      //const resource = createAudioResource(path.join(__dirname, 'audio.mp3'));
+      //const player = createAudioPlayer();
+ 
+      //player.play(resource);
+      //conn.subscribe(player);
 
 
       player.on(AudioPlayerStatus.Idle, () => {
+
+        unlink(path.join(__dirname, 'audio.mp3'), (err) => {
+          if(err) {
+            console.log(err)
+          }
+        })
+
         conn.destroy();
       });
 
@@ -59,6 +93,8 @@ client.on('messageCreate',  (message) => {
         guildId: message.guild.id,
         adapterCreator: message.guild.voiceAdapterCreator,
       });
+
+
 
       conn.destroy()
   }
