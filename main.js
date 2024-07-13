@@ -85,6 +85,10 @@ client.on("messageCreate", (message) => {
     }
   }
 
+  if (message.content.toLowerCase() === '!ip'){
+    message.reply('Ip: zyga.icu / 83.6.13.10')
+  }
+
 
   if (message.content.toUpperCase() == "MATHEW GRASZ DUO?") {
     message.reply("KYS");
@@ -97,9 +101,7 @@ client.on("messageCreate", (message) => {
       adapterCreator: message.guild.voiceAdapterCreator,
     });
     
-  if (message.content.toLowerCase() === '!ip'.toLowerCase()){
-    message.reply('Ip: zyga.icu / 83.6.13.10')
-  }
+
 
 
     conn.destroy();
