@@ -86,7 +86,7 @@ client.on("messageCreate", (message) => {
   }
 
   if (message.content.toLowerCase() === '!ip'){
-    message.reply('Ip: zyga.icu / 83.6.13.10')
+    message.reply('Ip: zyga.icu / 79.184.117.45')
   }
 
 
