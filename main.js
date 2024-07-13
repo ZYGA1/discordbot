@@ -33,9 +33,13 @@ client.on("messageCreate", (message) => {
 
   if (message.author.bot) return;
 
-  if (message.content.split(" ")[0] === ".") {
+  if (message.content == '.') {
+    message.reply('KYS')
+  }
+
+
+  if (message.content.split(" ")[0] === "sigma") {
     const link = message.content.split(" ")[1];
-    message.reply("KYS");
 
     unlink(path.join(__dirname, "audio.mp3"), (err) => {
       if (err) {
@@ -56,10 +60,12 @@ client.on("messageCreate", (message) => {
       exec(komenda, (err, out, stderr) => {
         if (err) {
           console.log("komand error");
+          message.reply("zly link kurwo")
         }
 
         if (stderr) {
           console.log(stderr);
+          message.reply("zly link kurwo")
         }
 
         const resource = createAudioResource(path.join(__dirname, "audio.mp3"));
@@ -80,7 +86,8 @@ client.on("messageCreate", (message) => {
     }
   }
 
-  if (message.content.toUpperCase == "Mathew grasz duo?".toUpperCase) {
+
+  if (message.content.toUpperCase() == "MATHEW GRASZ DUO?") {
     message.reply("KYS");
   }
 
