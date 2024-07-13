@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const ydtl = require('ytdl-core')
 dotenv.config();
 const path = require('path');
 
@@ -35,9 +36,10 @@ client.on('messageCreate',  (message) => {
         guildId: message.guild.id,
         adapterCreator: message.guild.voiceAdapterCreator,
       });
-
+      
       const player = createAudioPlayer();
-      const resource = createAudioResource(path.join(__dirname, 'audio.mp3'));
+      const stream = ydtl("https://www.youtube.com/embed/5aYwU4nj5QA", {filter: 'audioonly'})
+      const resource = createAudioResource(stream);
 
       player.play(resource);
       conn.subscribe(player);
