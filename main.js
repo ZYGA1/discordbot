@@ -29,7 +29,9 @@ client.on('messageCreate',  (message) => {
 
   if (message.author.bot) return;
 
-  if (message.content === '.') {
+  if (message.content.startsWith === '.') {
+
+    const link = message.content.split(' ')[1]
     message.reply("Chuj ci w dupe");
 
     unlink(path.join(__dirname, 'audio.mp3'), (err) => {
@@ -48,7 +50,7 @@ client.on('messageCreate',  (message) => {
 
       const player = createAudioPlayer();
 
-      const komenda = 'yt-dlp -x --audio-format mp3 -o audio.mp3 https://www.youtube.com/watch?v=pRpeEdMmmQ0'
+      const komenda = `yt-dlp -x --audio-format mp3 -o audio.mp3 ${link}`
       exec(komenda, (err, out, stderr) => {
         if (err) {
           console.log('komand error')
