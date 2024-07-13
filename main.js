@@ -1,13 +1,17 @@
 const dotenv = require("dotenv");
-const {exec} = require('child_process')
-const {unlink} = require('fs')
+const { exec } = require("child_process");
+const { unlink } = require("fs");
 dotenv.config();
-const path = require('path');
-
+const path = require("path");
 
 const { KEY } = process.env;
 const { Client, IntentsBitField, EmbedBuilder } = require("discord.js");
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const {
+  joinVoiceChannel,
+  createAudioPlayer,
+  createAudioResource,
+  AudioPlayerStatus,
+} = require("@discordjs/voice");
 const ytdl = require("ytdl-core");
 
 const client = new Client({
@@ -20,25 +24,24 @@ const client = new Client({
   ],
 });
 
-client.once('ready', () => {
+client.once("ready", () => {
   console.log(`${client.user.username} sigma`);
 });
 
-client.on('messageCreate',  (message) => {
+client.on("messageCreate", (message) => {
   console.log(message.author.username, message.content);
 
   if (message.author.bot) return;
 
-  if (message.content.startsWith === '.') {
+  if (message.content.split(" ")[0] === ".") {
+    const link = message.content.split(" ")[1];
+    message.reply("KYS");
 
-    const link = message.content.split(' ')[1]
-    message.reply("Chuj ci w dupe");
-
-    unlink(path.join(__dirname, 'audio.mp3'), (err) => {
-      if(err) {
-        console.log(err)
+    unlink(path.join(__dirname, "audio.mp3"), (err) => {
+      if (err) {
+        console.log(err);
       }
-    })
+    });
 
     if (message.member.voice.channel) {
       const conn = joinVoiceChannel({
@@ -46,73 +49,65 @@ client.on('messageCreate',  (message) => {
         guildId: message.guild.id,
         adapterCreator: message.guild.voiceAdapterCreator,
       });
-      
 
       const player = createAudioPlayer();
 
-      const komenda = `yt-dlp -x --audio-format mp3 -o audio.mp3 ${link}`
+      const komenda = `yt-dlp -x --audio-format mp3 -o audio.mp3 ${link}`;
       exec(komenda, (err, out, stderr) => {
         if (err) {
-          console.log('komand error')
+          console.log("komand error");
         }
 
-        if(stderr) {
-          console.log(stderr)
+        if (stderr) {
+          console.log(stderr);
         }
 
-        const resource = createAudioResource(path.join(__dirname, 'audio.mp3'));
-        
+        const resource = createAudioResource(path.join(__dirname, "audio.mp3"));
 
         player.play(resource);
         conn.subscribe(player);
-      })
-
-      //const resource = createAudioResource(path.join(__dirname, 'audio.mp3'));
-      //const player = createAudioPlayer();
- 
-      //player.play(resource);
-      //conn.subscribe(player);
-
+      });
 
       player.on(AudioPlayerStatus.Idle, () => {
-
-        unlink(path.join(__dirname, 'audio.mp3'), (err) => {
-          if(err) {
-            console.log(err)
+        unlink(path.join(__dirname, "audio.mp3"), (err) => {
+          if (err) {
+            console.log(err);
           }
-        })
+        });
 
         conn.destroy();
       });
-
-
     }
   }
 
-  if (message.content === ',') {
+  if (message.content.toUpperCase == "Mathew grasz duo?".toUpperCase) {
+    message.reply("KYS");
+  }
+
+  if (message.content === ",") {
     const conn = joinVoiceChannel({
-        channelId: message.member.voice.channel.id,
-        guildId: message.guild.id,
-        adapterCreator: message.guild.voiceAdapterCreator,
-      });
+      channelId: message.member.voice.channel.id,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator,
+    });
 
-
-
-      conn.destroy()
+    conn.destroy();
   }
 });
 
-client.on('interactionCreate',  (interaction) => {
+client.on("interactionCreate", (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   console.log(interaction);
 
-  if (interaction.commandName === 'dis') {
+  if (interaction.commandName === "dis") {
     const embed = new EmbedBuilder()
       .setTitle(`${interaction.member.nickname} jebie mathewa`)
-      .setImage("https://th.bing.com/th/id/R.d786da2ec6bfacc6b066f7b80a5e5228?rik=pT24zl1SBLKJtw&riu=http%3a%2f%2fwallsdesk.com%2fwp-content%2fuploads%2f2016%2f12%2fWild-Boar-Wallpapers-HD.jpg&ehk=St5F6QW35D4yqym5OJMKuH628SEHq%2fVpHaq0FKRyasU%3d&risl=&pid=ImgRaw&r=0");
+      .setImage(
+        "https://th.bing.com/th/id/R.d786da2ec6bfacc6b066f7b80a5e5228?rik=pT24zl1SBLKJtw&riu=http%3a%2f%2fwallsdesk.com%2fwp-content%2fuploads%2f2016%2f12%2fWild-Boar-Wallpapers-HD.jpg&ehk=St5F6QW35D4yqym5OJMKuH628SEHq%2fVpHaq0FKRyasU%3d&risl=&pid=ImgRaw&r=0"
+      );
 
-     interaction.reply({ embeds: [embed] });
+    interaction.reply({ embeds: [embed] });
   }
 });
 
