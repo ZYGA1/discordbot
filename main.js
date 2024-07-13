@@ -34,6 +34,17 @@ client.on("messageCreate", (message) => {
   if (message.author.bot) return;
 
   if (message.content == '.') {
+    const key = process.env.WEATHER_KEY
+    const baseUrl = "https://api.openweathermap.org/data/2.5/weather?"
+    const city = "Warsaw"
+
+    const URL = baseUrl + "q=" + city + "&appid=" + key
+    console.log(URL)
+
+
+    console.log(key)
+
+
     message.reply('KYS')
   }
 

@@ -7,6 +7,10 @@ const commands = [
         name: 'dis',
         description: 'jebac disa',
     },
+    {
+        name: 'pogoda',
+        description: 'pogoda',
+    },
 ]
 
 const rest = new REST({ version: '10' })
