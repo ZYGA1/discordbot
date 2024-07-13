@@ -65,7 +65,6 @@ client.on("messageCreate", (message) => {
 
         if (stderr) {
           console.log(stderr);
-          message.reply("zly link kurwo")
         }
 
         const resource = createAudioResource(path.join(__dirname, "audio.mp3"));
@@ -97,6 +96,11 @@ client.on("messageCreate", (message) => {
       guildId: message.guild.id,
       adapterCreator: message.guild.voiceAdapterCreator,
     });
+    
+  if (message.content.toLowerCase() === '!ip'.toLowerCase()){
+    message.reply('Ip: zyga.icu / 83.6.13.10')
+  }
+
 
     conn.destroy();
   }
@@ -113,6 +117,8 @@ client.on("interactionCreate", (interaction) => {
       .setImage(
         "https://th.bing.com/th/id/R.d786da2ec6bfacc6b066f7b80a5e5228?rik=pT24zl1SBLKJtw&riu=http%3a%2f%2fwallsdesk.com%2fwp-content%2fuploads%2f2016%2f12%2fWild-Boar-Wallpapers-HD.jpg&ehk=St5F6QW35D4yqym5OJMKuH628SEHq%2fVpHaq0FKRyasU%3d&risl=&pid=ImgRaw&r=0"
       );
+
+      
 
     interaction.reply({ embeds: [embed] });
   }
