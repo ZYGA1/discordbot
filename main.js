@@ -1,18 +1,21 @@
-const dotenv = require("dotenv");
+require("dotenv").config();
 const { exec } = require("child_process");
 const { unlink } = require("fs");
-dotenv.config();
+const reg = require("./registercommands");
+const setCommands = require("./commandHandler");
 const path = require("path");
 
 const { KEY } = process.env;
-const { Client, IntentsBitField, EmbedBuilder } = require("discord.js");
+const {
+  Client,
+  IntentsBitField,
+} = require("discord.js");
 const {
   joinVoiceChannel,
   createAudioPlayer,
   createAudioResource,
   AudioPlayerStatus,
 } = require("@discordjs/voice");
-const ytdl = require("ytdl-core");
 
 const client = new Client({
   intents: [
@@ -25,6 +28,20 @@ const client = new Client({
   ],
 });
 
+setCommands(client);
+client.player = {
+  queue: ['a']
+};
+
+console.log(client.player)
+
+let comm = [];
+client.commands.forEach((e) => {
+  comm.push(e.data);
+});
+
+reg(comm);
+
 client.once("ready", () => {
   console.log(`${client.user.username} sigma`);
 });
@@ -35,17 +52,7 @@ client.on("messageCreate", (message) => {
   if (message.author.bot) return;
 
   if (message.content == ".") {
-    const key = process.env.WEATHER_KEY;
-    const baseUrl = "https://api.openweathermap.org/data/2.5/weather?";
-    const city = "Ostroleka";
-
-    const URL = baseUrl + "q=" + city + "&appid=" + key;
-
-    fetch(URL)
-      .then((result) => result.json())
-      .then((data) => console.log(Math.round(data.main.temp - 273.15)));
-
-    message.reply("KYS");
+    message.channel.send("KYS")
   }
 
   if (message.content.split(" ")[0] === "sigma") {
@@ -63,6 +70,8 @@ client.on("messageCreate", (message) => {
         guildId: message.guild.id,
         adapterCreator: message.guild.voiceAdapterCreator,
       });
+
+      client.connection = conn;
 
       const player = createAudioPlayer();
 
@@ -96,7 +105,7 @@ client.on("messageCreate", (message) => {
   }
 
   if (message.content.toLowerCase() === "!ip") {
-    message.reply("Ip: zyga.icu / 79.184.117.45");
+    message.reply("Ip: zyga.icu");
   }
 
   if (message.content.toLowerCase() === "!wersja") {
@@ -108,53 +117,27 @@ client.on("messageCreate", (message) => {
   }
 
   if (message.content === ",") {
-    const conn = joinVoiceChannel({
-      channelId: message.member.voice.channel.id,
-      guildId: message.guild.id,
-      adapterCreator: message.guild.voiceAdapterCreator,
-    });
 
-    conn.destroy();
+    if(client.connection){
+      client.connection.destroy();
+    }
   }
 });
 
 client.on("interactionCreate", (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  console.log(interaction);
-
-  if (interaction.commandName === "dis") {
-    const embed = new EmbedBuilder()
-      .setTitle(`${interaction.member.nickname} jebie mathewa`)
-      .setImage(
-        "https://th.bing.com/th/id/R.d786da2ec6bfacc6b066f7b80a5e5228?rik=pT24zl1SBLKJtw&riu=http%3a%2f%2fwallsdesk.com%2fwp-content%2fuploads%2f2016%2f12%2fWild-Boar-Wallpapers-HD.jpg&ehk=St5F6QW35D4yqym5OJMKuH628SEHq%2fVpHaq0FKRyasU%3d&risl=&pid=ImgRaw&r=0"
-      );
-
-    interaction.reply({ embeds: [embed] });
-  }
-
-  if (interaction.commandName === "pogoda") {
-    const key = process.env.WEATHER_KEY;
-    const baseUrl = "https://api.openweathermap.org/data/2.5/weather?";
-    const city = "Ciechanow";
-
-    const URL = baseUrl + "q=" + city + "&appid=" + key;
-
-    fetch(URL)
-      .then((result) => result.json())
-      .then((data) => {
-        console.log(data);
-
-        const embed = new EmbedBuilder()
-          .setTitle("Pogoda")
-          .setDescription(
-            `${data.name}: ${(data.main.temp - 273.15).toFixed(1)} C`
-          )
-          .setTimestamp();
-
-        interaction.reply({ embeds: [embed] });
-      });
-  }
+  client.commands.forEach((e) => {
+    if (interaction.commandName === e.data.name) {
+      console.log(e.data)
+      if(e.data.client){
+        e.execute(interaction, client)
+      }else {
+        e.execute(interaction);
+      }
+      
+    }
+  });
 });
 
 client.login(KEY);
