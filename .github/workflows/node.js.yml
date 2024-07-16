@@ -29,6 +29,6 @@ jobs:
     - run: npm ci
     - run: touch .env
     - run: echo "${{ secrets.ENV }}" > .env
-    - run: pm2 restart main 
+    - run: pm2 start main 
 
 
